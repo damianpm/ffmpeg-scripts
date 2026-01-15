@@ -9,6 +9,7 @@ Small collection of handy FFmpeg helper scripts for working with video files:
 
 ## 🔧 Prerequisites
 
+
 - ffmpeg and ffprobe must be installed and available on PATH.
   - macOS (Homebrew): `brew install ffmpeg`
 - Make sure scripts are executable: `chmod +x add_watermark.sh extract_sample.sh`
