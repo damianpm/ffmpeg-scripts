@@ -52,13 +52,15 @@ detect_fontfile() {
     die "No usable font found. Set FONTFILE=/path/to/font.ttf to override."
 }
 
-# Escape a string for safe use inside an ffmpeg drawtext 'text=...' value.
-# Pair with expansion=none on the filter so % is treated literally; we still
-# escape \, :, and ' which are filter-graph syntax characters.
+# Escape a string for safe use inside an ffmpeg drawtext filter value
+# (fontfile, fontcolor, etc.). Handles the filter-graph parser's specials:
+# backslash, colon (option separator), and apostrophe (quote delimiter).
+# Used for option VALUES only — for the text itself, prefer passing via
+# textfile=<path> to sidestep escaping entirely.
 escape_drawtext() {
     local s="$1"
     s="${s//\\/\\\\}"
     s="${s//:/\\:}"
-    s="${s//\'/\\\\\\\'}"
+    s="${s//\'/\\\'}"
     printf '%s' "$s"
 }

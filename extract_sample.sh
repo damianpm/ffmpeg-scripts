@@ -57,6 +57,10 @@ fi
 DURATION=$(ffprobe -v error -show_entries format=duration \
     -of default=noprint_wrappers=1:nokey=1 "$INPUT")
 [ -n "$DURATION" ] || die "ffprobe could not read duration from '$INPUT'."
+# ffprobe may return 'N/A' or similar for unseekable/streaming inputs; require a finite number.
+if ! [[ "$DURATION" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    die "ffprobe returned non-numeric duration '$DURATION' for '$INPUT'."
+fi
 echo "Input video duration: ${DURATION}s"
 
 MAX_POSSIBLE=$(awk "BEGIN {print int($DURATION/10)*10}")
@@ -95,7 +99,7 @@ SEGMENT_LIST="$TEMP_DIR/segments.txt"
 : > "$SEGMENT_LIST"
 
 # Encode each segment once to MPEG-TS so concat demuxer can stream-copy them.
-for i in $(seq 0 $((NUM_SEGMENTS - 1))); do
+for ((i=0; i<NUM_SEGMENTS; i++)); do
     SEG_FILE="$TEMP_DIR/seg_${i}.ts"
     DUR="${SEG_DURS[i]}"
 
