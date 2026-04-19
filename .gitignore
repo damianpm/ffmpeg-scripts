@@ -1,0 +1,7 @@
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.ts
+*.DS_Store
+tmp/
